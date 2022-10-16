@@ -11,11 +11,54 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
+  late Animation colorAnimation;
+  late Animation curvedAnimation;
+
+  @override
+  void initState() {
+    animationController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+
+    colorAnimation = ColorTween(begin: Colors.blueGrey, end: Colors.white)
+        .animate(animationController);
+
+    curvedAnimation =
+        CurvedAnimation(parent: animationController, curve: Curves.decelerate);
+
+    animationController.forward();
+    // animationController.reverse(from: 1.0);
+
+    curvedAnimation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        animationController.reverse(from: 1.0);
+      } else if (status == AnimationStatus.dismissed) {
+        animationController.forward();
+      }
+    });
+
+    animationController.addListener(() {
+      setState(() {});
+      // print(animation.value);
+      // print(animationController.value);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorAnimation.value,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -27,7 +70,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 Hero(
                   tag: 'logo',
                   child: SizedBox(
-                    height: 60.0,
+                    height: curvedAnimation.value * 100,
                     child: Image.asset('images/logo.png'),
                   ),
                 ),
