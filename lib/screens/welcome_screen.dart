@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flash_chat_flutter/screens/login_screen.dart';
 import 'package:flash_chat_flutter/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       // print(animation.value);
       // print(animationController.value);
     });
+
+    Firebase.initializeApp().whenComplete(() {
+      print("completed");
+      setState(() {});
+    });
+
     super.initState();
   }
 
